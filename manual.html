@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HoloLens 2 — conectar e instalar, do zero</title>
+<!--
+  Versao de tela do guia. A base e o `hololens tutorial.txt` deste
+  repositorio, escrito durante o TCC.
+
+  O que este documento acrescenta ao arquivo de notas: a ordem de
+  execucao, o porque de cada passo e, principalmente, a marcacao dos
+  pontos onde a coisa falha EM SILENCIO. Um tutorial em topicos assume que
+  quem le ja sabe o que esperar de cada etapa, e e justamente isso que
+  falta na primeira vez.
+-->
+<style>
+:root{--fundo:#111318;--painel:#1a1d24;--borda:#2b303a;--texto:#e8e8e8;
+      --fraco:#9aa3ad;--destaque:#8fd0ff;--alerta:#ff8f8f;--ambar:#ffc46b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fundo);color:var(--texto);
+     font:16px/1.65 -apple-system,"Segoe UI",system-ui,sans-serif}
+main{max-width:46rem;margin:0 auto;padding:2.5rem 1.25rem 4rem}
+h1{font-size:1.7rem;line-height:1.25;margin:0 0 .25rem}
+.sub{color:var(--fraco);margin:0 0 2rem}
+h2{font-size:1.25rem;margin:3rem 0 .75rem;padding-top:1.25rem;
+   border-top:1px solid var(--borda)}
+h2 .num{color:var(--fraco);font-weight:400;margin-right:.5rem}
+h3{font-size:1.05rem;margin:2rem 0 .5rem}
+p{margin:0 0 1rem}
+ol,ul{margin:0 0 1rem;padding-left:1.4rem}
+li{margin-bottom:.55rem}
+code{font-family:"SF Mono",Consolas,ui-monospace,monospace;font-size:.92em;
+     background:#0c0e12;border:1px solid var(--borda);border-radius:3px;
+     padding:.08em .35em}
+pre{background:#0c0e12;border:1px solid var(--borda);border-radius:6px;
+    padding:.85rem 1rem;overflow-x:auto;margin:0 0 1rem}
+pre code{background:none;border:none;padding:0;color:var(--destaque)}
+a{color:var(--destaque)}
+table{width:100%;border-collapse:collapse;margin:0 0 1.25rem;font-size:.93rem}
+th,td{text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--borda);
+      vertical-align:top}
+th{color:var(--fraco);font-weight:600;font-size:.82rem;
+   text-transform:uppercase;letter-spacing:.05em}
+.caixa{background:var(--painel);border:1px solid var(--borda);
+       border-left:3px solid var(--destaque);border-radius:6px;
+       padding:1rem 1.15rem;margin:0 0 1.5rem}
+.caixa p:last-child{margin-bottom:0}
+.caixa.perigo{border-left-color:var(--alerta)}
+.caixa.atencao{border-left-color:var(--ambar)}
+.caixa b.rotulo{display:block;font-size:.8rem;letter-spacing:.06em;
+       text-transform:uppercase;color:var(--fraco);margin-bottom:.35rem}
+.nota{color:var(--fraco);font-size:.92rem}
+.botao{display:inline-block;background:var(--destaque);color:#111;
+       font-weight:600;text-decoration:none;padding:.8rem 1.3rem;
+       border-radius:6px;font-size:1rem}
+.botao.vazio{background:transparent;color:var(--texto);
+       border:1px solid var(--borda);font-weight:400;font-size:.93rem}
+.acoes{display:flex;flex-wrap:wrap;gap:.7rem;align-items:center;
+       margin:.5rem 0 1.25rem}
+nav.sumario{background:var(--painel);border:1px solid var(--borda);
+       border-radius:6px;padding:1rem 1.15rem;margin:0 0 2rem}
+nav.sumario ol{margin:0;padding-left:1.3rem}
+nav.sumario li{margin-bottom:.3rem}
+figure{margin:1.5rem 0}
+figure img{display:block;max-width:100%;height:auto;margin:0 auto;
+           background:#fff;border-radius:4px}
+figcaption{color:var(--fraco);font-size:.88rem;text-align:center;
+           margin-top:.6rem}
+.duas-figuras{display:flex;flex-wrap:wrap;gap:0 1.4rem;align-items:flex-start}
+.duas-figuras>figure{flex:1 1 17rem;min-width:0}
+.passos{counter-reset:passo;list-style:none;padding-left:0}
+.passos>li{counter-increment:passo;position:relative;padding-left:2.4rem;
+       margin-bottom:1rem}
+.passos>li::before{content:counter(passo);position:absolute;left:0;top:.1rem;
+       width:1.7rem;height:1.7rem;border-radius:50%;background:var(--painel);
+       border:1px solid var(--borda);color:var(--destaque);font-size:.85rem;
+       font-weight:700;display:flex;align-items:center;justify-content:center}
+footer{margin-top:3.5rem;padding-top:1.25rem;border-top:1px solid var(--borda);
+       color:var(--fraco);font-size:.9rem}
+ol.refs{list-style:none;padding-left:0;margin:0 0 1.25rem;counter-reset:ref}
+ol.refs li{counter-increment:ref;position:relative;padding-left:2.2rem;
+           margin-bottom:.9rem}
+ol.refs li::before{content:"[" counter(ref) "]";position:absolute;left:0;
+           font-weight:700;color:var(--destaque)}
+ol.refs .url{display:block;font-family:"SF Mono",Consolas,ui-monospace,monospace;
+           font-size:.82rem;word-break:break-all}
+ol.refs .o-que{display:block;color:var(--fraco);font-size:.92rem;
+           margin-top:.15rem}
+sup.ref{font-size:.7em;font-weight:700;color:var(--destaque)}
+@media (max-width:30rem){
+  table{font-size:.86rem}
+  th,td{padding:.4rem .35rem}
+  .passos>li{padding-left:2.1rem}
+}
+@media print{body{background:#fff;color:#000}a{color:#000}}
+</style>
+</head>
+<body>
+<main>
+
+<h1>HoloLens 2: conectar e instalar, do zero</h1>
+<p class="sub">Do projeto aberto no Unity até o aplicativo rodando no
+aparelho. Baseado no <code>hololens tutorial.txt</code> deste repositório,
+reorganizado em ordem de execução.</p>
+
+<p class="acoes">
+<a class="botao vazio" href="manual-impresso.pdf">Versão para imprimir (PDF, 13 páginas)</a>
+</p>
+
+<nav class="sumario">
+<b>O que tem aqui</b>
+<ol>
+<li><a href="#fluxo">O caminho inteiro, antes de começar</a></li>
+<li><a href="#aparelho">O aparelho e os botões</a></li>
+<li><a href="#ferramentas">Instalar as ferramentas</a></li>
+<li><a href="#unity">Unity e MRTK</a></li>
+<li><a href="#build">Build Settings e a solution</a></li>
+<li><a href="#pacote">Visual Studio: gerar o pacote</a></li>
+<li><a href="#portal">Instalar pelo Device Portal</a></li>
+<li><a href="#usb">Parear e implantar por USB</a></li>
+<li><a href="#usar">Gravar vídeo e extrair arquivos</a></li>
+<li><a href="#problemas">Quando dá errado</a></li>
+<li><a href="#referencias">Referências</a></li>
+</ol>
+</nav>
+
+<h2 id="fluxo"><span class="num">1.</span>O caminho inteiro, antes de começar</h2>
+
+<p>São quatro etapas até ter um pacote na mão, e duas rotas alternativas
+para pôr esse pacote dentro do aparelho. Vale olhar o desenho antes de
+executar: quem está no meio do processo perde a noção de quanto falta e de
+onde a coisa pode ter dado errado.</p>
+
+<figure>
+<img src="figuras/fig-01-fluxo.png" alt="Diagrama do fluxo do projeto ao aparelho">
+<figcaption>As quatro etapas de geração e as duas rotas de instalação.</figcaption>
+</figure>
+
+<table>
+<thead><tr><th>Etapa</th><th>Produz</th><th>Onde costuma falhar</th></tr></thead>
+<tbody>
+<tr><td><b>1. Unity</b></td><td>a cena com o MRTK configurado</td>
+<td>plataforma ainda em Windows, e não em UWP</td></tr>
+<tr><td><b>2. Build</b></td><td>uma <b>pasta</b> com um <code>.sln</code>
+dentro</td><td>abrir o <code>.sln</code> errado, fora da pasta gerada</td></tr>
+<tr><td><b>3. Visual Studio</b></td><td>o projeto compilado</td>
+<td>ficar em <code>Debug</code> em vez de <code>Release</code></td></tr>
+<tr><td><b>4. Pacote</b></td><td>o <code>.appx</code> e a pasta de
+<b>dependências</b></td><td>escolher arquitetura diferente da do build</td></tr>
+<tr><td><b>5a. Portal</b></td><td>o app instalado</td>
+<td>não marcar a caixa das dependências</td></tr>
+<tr><td><b>5b. USB</b></td><td>o app instalado e rodando</td>
+<td>PIN de pareamento expirado</td></tr>
+</tbody>
+</table>
+
+<div class="caixa perigo">
+<b class="rotulo">A arquitetura atravessa o fluxo inteiro</b>
+<p><b>ARM64</b> para o aparelho de verdade, <b>x64</b> para o emulador, e a
+mesma escolha em todas as etapas. Compilar em ARM64 e tentar instalar no
+emulador, ou o contrário, produz uma falha genérica de instalação que não
+diz qual é o problema.</p>
+</div>
+
+<h3>Testar no emulador antes</h3>
+
+<p>O emulador roda no PC e aceita o mesmo pacote, compilado em x64. Vale
+usar enquanto o projeto ainda muda muito: o ciclo é mais rápido e não ocupa
+o aparelho, que costuma ser um só no laboratório.</p>
+
+<p>O que o emulador não reproduz é o que mais importa no fim: o
+posicionamento espacial real. <b>Espere que o modelo apareça em outro lugar
+no aparelho.</b> Não é defeito do projeto, é o mapeamento da sala.</p>
+
+<div class="caixa atencao">
+<b class="rotulo">Sobre as versões</b>
+<p>O caminho descrito aqui é o do <b>MRTK 2</b> com build UWP, que foi o
+usado no projeto e continua funcionando. Existe um <b>MRTK 3</b>, com outra
+estrutura de pacotes, que não é o descrito aqui. As etapas de
+<a href="#pacote">empacotar</a> e <a href="#portal">instalar</a> valem para
+os dois, porque não dependem do toolkit.</p>
+<p>Sobre o equipamento: a produção do HoloLens 2 foi encerrada, com
+atualizações de segurança anunciadas até o fim de 2027
+<sup class="ref">[5]</sup>. Isso não muda nenhum
+passo daqui, mas muda a decisão de apostar nesta plataforma para um trabalho
+novo e longo.</p>
+</div>
+
+<h2 id="aparelho"><span class="num">2.</span>O aparelho e os botões</h2>
+
+<div class="duas-figuras">
+<figure>
+<img src="figuras/foto-aparelho.png" alt="Fotografia do HoloLens 2 de três quartos, mostrando o visor, a faixa de cabeça e o conjunto traseiro">
+<figcaption>O aparelho inteiro: visor, faixa de cabeça e o conjunto
+traseiro, que é onde ficam a bateria e o ajuste.</figcaption>
+</figure>
+<figure>
+<img src="figuras/fig-02-dispositivo.png" alt="Desenho esquemático do HoloLens 2 visto do lado direito">
+<figcaption>Vista do lado direito, onde ficam os controles.
+Esquemático, fora de escala.</figcaption>
+</figure>
+</div>
+
+<table>
+<thead><tr><th style="width:2rem"></th><th style="width:9rem">Controle</th><th>Função</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><b>Volume + e −</b></td><td>volume no uso normal
+<sup class="ref">[4]</sup>. Os dois
+juntos tiram uma <b>foto</b>; segurando os dois por três segundos começa um
+<b>vídeo</b>, e um toque nos dois para a gravação.</td></tr>
+<tr><td>2</td><td><b>Energia</b></td><td>liga e desliga. Os LEDs ao lado
+mostram carga e estado.</td></tr>
+<tr><td>3</td><td><b>USB-C</b></td><td>carga e cabo de dados. É por aqui que
+passa o pareamento com o Visual Studio e a cópia de arquivos.</td></tr>
+</tbody>
+</table>
+
+<h3>O que ter em mãos antes de começar</h3>
+
+<table>
+<thead><tr><th style="width:12rem">Item</th><th>Por quê</th></tr></thead>
+<tbody>
+<tr><td>Aparelho carregado</td><td>um aparelho desligando no meio da
+implantação deixa o pacote pela metade</td></tr>
+<tr><td>Usuário e senha do Device Portal</td><td>criados na primeira vez que
+ele é habilitado, e não recuperáveis depois</td></tr>
+<tr><td>Mesma rede que o PC</td><td>a rota do portal é pela rede. Sem ela,
+sobra o cabo.</td></tr>
+<tr><td>Cabo USB-C <b>de dados</b></td><td>cabo só de carga não serve, e é a
+causa silenciosa mais comum de "o PC não vê o aparelho"</td></tr>
+<tr><td>Espaço físico livre</td><td>o aparelho mapeia a sala. Testar
+encostado numa parede branca e vazia dá um mapeamento ruim.</td></tr>
+</tbody>
+</table>
+
+<h2 id="ferramentas"><span class="num">3.</span>Instalar as ferramentas</h2>
+
+<p>A ordem importa: o Unity precisa encontrar o Visual Studio já instalado
+para oferecer o suporte a UWP. Instale o Visual Studio primeiro.</p>
+
+<ol class="passos">
+<li><b>Visual Studio</b>, com as cargas de trabalho
+<code>Desktop development with C++</code>,
+<code>Universal Windows Platform development</code> e
+<code>Game development with Unity</code>. Nos componentes individuais,
+confirme o <b>Windows 10/11 SDK</b> e o suporte a
+<code>USB Device Connectivity</code>.</li>
+
+<li><b>Unity Hub e o editor</b>, marcando o módulo
+<code>Universal Windows Platform Build Support</code>. Sem esse módulo a
+plataforma UWP aparece na lista mas não pode ser selecionada, e a mensagem
+não explica por quê.</li>
+
+<li><b>Emulador do HoloLens 2</b>, se você vai testar sem o aparelho. Ele
+exige virtualização habilitada na BIOS e o Hyper-V ligado.</li>
+
+<li><b>Modo de desenvolvedor no Windows</b> do PC:
+<code>Configurações → Privacidade e segurança → Para desenvolvedores</code>.
+Sem isso não dá para instalar um pacote assinado por certificado
+próprio.</li>
+
+<li><b>Modo de desenvolvedor no HoloLens</b>:
+<code>Settings → Update &amp; Security → For developers</code>. Ative as
+opções de desenvolvedor e, na mesma tela, o <b>Device Portal</b>.</li>
+</ol>
+
+<div class="caixa perigo">
+<b class="rotulo">Anote a senha do Device Portal</b>
+<p>Ao habilitar o portal pela primeira vez, o aparelho pede para criar um
+usuário e uma senha. Eles não são a conta da Microsoft e não são
+recuperáveis depois. Sem eles o navegador não passa da tela de login, e o
+único caminho é redefinir o portal no próprio aparelho.</p>
+</div>
+
+<p>A lista de versões compatíveis muda com o tempo, e a página que a mantém
+atualizada é a da Microsoft:</p>
+
+<pre><code>learn.microsoft.com/windows/mixed-reality/develop/install-the-tools</code></pre>
+
+<p class="nota">Referência <a href="#referencias">[1]</a>.</p>
+
+<p class="nota">Consulte essa página antes de instalar. Ela é a única fonte
+que diz qual versão do Unity casa com qual versão do toolkit no momento em
+que você estiver lendo. Este guia descreve o procedimento, não a tabela de
+versões. E reserve uma tarde: instalar tudo leva bem mais tempo e espaço em
+disco do que parece.</p>
+
+<h2 id="unity"><span class="num">4.</span>Unity e MRTK</h2>
+
+<p>O MRTK é o que transforma um projeto 3D comum em um projeto de realidade
+mista: ele traz as mãos, o olhar, os menus flutuantes e o perfil de
+configuração do aparelho. Sem ele, a cena compila e roda, mas não responde
+a gesto nenhum.</p>
+
+<ol class="passos">
+<li><b>Crie um projeto 3D</b> no Unity Hub, com o editor que tem o módulo
+UWP instalado.</li>
+
+<li><b>Troque a plataforma para UWP.</b>
+<code>File → Build Settings</code>, selecione
+<code>Universal Windows Platform</code> e clique em
+<code>Switch Platform</code>. Isso reimporta os assets e demora.</li>
+
+<li><b>Baixe os pacotes do MRTK</b>, o <i>Foundation</i> e o <i>Tools</i>.
+São arquivos <code>.unitypackage</code>.</li>
+
+<li><b>Importe o Foundation</b> arrastando para o projeto aberto. Ao
+terminar, aparece a janela de configuração do MRTK. Ela nasce pequena:
+<b>estique a janela</b> antes de decidir qualquer coisa, ou os botões ficam
+fora da área visível.</li>
+
+<li><b>Aceite a primeira opção</b> na janela de configuração, que aplica as
+definições recomendadas ao projeto.</li>
+
+<li><b>Habilite o OpenXR</b> em
+<code>Edit → Project Settings → XR Plug-in Management</code>, na aba da
+plataforma UWP.</li>
+
+<li><b>Importe o Tools</b>, do mesmo jeito.</li>
+
+<li><b>Ponha o MRTK na cena</b>:
+<code>Mixed Reality → Toolkit → Add to Scene and Configure</code>.</li>
+
+<li><b>Troque o perfil</b> no <code>Inspector</code>, à direita, para
+<code>DefaultHoloLens2ConfigurationProfile</code>. Sem isso a cena fica com
+o perfil genérico, que não assume mãos nem o formato do visor.</li>
+
+<li><b>Aperte Play</b> e confirme que a cena roda no editor.</li>
+</ol>
+
+<div class="caixa perigo">
+<b class="rotulo">Não pule o passo 10</b>
+<p>Um projeto que não roda no editor não vai rodar no aparelho. Cada volta
+do ciclo build, empacotar e instalar custa dezenas de minutos, e depurar no
+aparelho é muito mais difícil do que depurar no editor.</p>
+</div>
+
+<h2 id="build"><span class="num">5.</span>Build Settings e a solution</h2>
+
+<figure>
+<img src="figuras/fig-03-build.png" alt="Esquema da janela Build Settings do Unity com os valores recomendados">
+<figcaption>Os campos que importam em <code>File → Build Settings</code>.
+Esquemático: a lista varia com a versão do Unity.</figcaption>
+</figure>
+
+<table>
+<thead><tr><th style="width:11rem">Campo</th><th style="width:9rem">Valor</th><th>Por quê</th></tr></thead>
+<tbody>
+<tr><td><code>Target Device</code></td><td><code>HoloLens</code></td>
+<td>define o perfil de dispositivo do pacote</td></tr>
+<tr><td><code>Architecture</code></td><td><code>ARM 64-bit</code></td>
+<td><b>x64</b> se o alvo for o emulador. É o campo que mais causa erro.</td></tr>
+<tr><td><code>Build Type</code></td><td><code>D3D Project</code></td>
+<td>gera um projeto de aplicativo, e não uma biblioteca</td></tr>
+<tr><td><code>Target SDK Version</code></td><td><code>Latest installed</code></td>
+<td>usa o SDK que você realmente instalou</td></tr>
+<tr><td><code>Build configuration</code></td><td><code>Release</code></td>
+<td>em <code>Debug</code> o app roda devagar no aparelho e às vezes nem
+empacota</td></tr>
+</tbody>
+</table>
+
+<ol class="passos">
+<li><b>Clique em <code>Build</code></b> e escolha uma pasta vazia, por
+exemplo <code>Build/</code> dentro do projeto.</li>
+<li><b>Espere.</b> A primeira compilação é longa.</li>
+<li><b>Abra a pasta gerada</b> e localize o <code>.sln</code> <b>dentro
+dela</b>.</li>
+</ol>
+
+<div class="caixa perigo">
+<b class="rotulo">O .sln certo</b>
+<p>É o que está <b>dentro da pasta que o build acabou de criar</b>, e não o
+<code>.sln</code> que o Unity possa ter deixado na raiz do projeto para
+editar scripts. São arquivos diferentes: o da raiz não empacota nada, e quem
+abre o errado fica procurando a opção de publicar num menu onde ela não
+existe.</p>
+</div>
+
+<p class="nota">O Unity oferece <code>Build And Run</code>, que compila e já
+tenta implantar. Enquanto você está aprendendo o fluxo, prefira só
+<code>Build</code>: com as etapas separadas dá para ver em qual delas a
+coisa parou.</p>
+
+<h2 id="pacote"><span class="num">6.</span>Visual Studio: gerar o pacote</h2>
+
+<ol class="passos">
+<li><b>Abra o <code>.sln</code></b> que está dentro da pasta do build.</li>
+<li><b>Confirme a configuração na barra de cima: <code>Release</code></b>, e
+a plataforma igual à do build (<code>ARM64</code> para o aparelho,
+<code>x64</code> para o emulador).</li>
+<li><b>No Gerenciador de Soluções</b>, à direita, clique com o botão direito
+no projeto e escolha
+<code>Publicar → Criar Pacotes de Aplicativo</code>.</li>
+<li><b>Escolha <code>Sideloading</code></b>, que é distribuição fora da
+loja.</li>
+<li><b>Selecione ou crie o certificado.</b> Um certificado de teste gerado
+na hora serve.</li>
+<li><b>Marque a arquitetura</b> correspondente, a mesma de novo.</li>
+<li><b>Aguarde o aviso</b> de que o pacote foi gerado. Ele diz onde os
+arquivos ficaram.</li>
+</ol>
+
+<table>
+<thead><tr><th style="width:14rem">Arquivo ou pasta</th><th>Para que serve</th></tr></thead>
+<tbody>
+<tr><td><code>NomeDoApp_versão_ARM64.appx</code><br>(ou <code>.msix</code>)</td>
+<td>o aplicativo. É o arquivo principal.</td></tr>
+<tr><td><code>Dependencies/</code></td><td>as bibliotecas de runtime, numa
+subpasta <b>por arquitetura</b>. É o que quase todo mundo esquece.</td></tr>
+<tr><td><code>.cer</code></td><td>o certificado que assinou o pacote.</td></tr>
+</tbody>
+</table>
+
+<div class="caixa perigo">
+<b class="rotulo">A subpasta de dependência certa</b>
+<p>Pegue a que <b>corresponde ao alvo</b>: <code>ARM64</code> para o
+aparelho, <code>x64</code> para o emulador. Mandar a dependência da
+arquitetura errada falha na instalação com uma mensagem que fala de pacote
+inválido, sem dizer que o problema é a arquitetura.</p>
+</div>
+
+<p class="nota">Com o pacote e as dependências em mãos, o resto pode ser
+feito de qualquer PC na mesma rede do aparelho. Guarde a pasta inteira: para
+reinstalar depois, não é preciso recompilar nada.</p>
+
+<h2 id="portal"><span class="num">7.</span>Instalar pelo Device Portal</h2>
+
+<p>O Device Portal é um site que o próprio aparelho serve. Do navegador do
+PC dá para instalar aplicativos, ver o que está rodando, gravar a tela e
+navegar nos arquivos. É a rota mais simples, e é a que não precisa de
+cabo.</p>
+
+<table>
+<thead><tr><th style="width:7rem">Ligação</th><th>Endereço</th></tr></thead>
+<tbody>
+<tr><td><b>Wi-Fi</b></td><td><code>http://&lt;IP do aparelho&gt;</code>. O IP
+está em <code>Settings → Network &amp; Internet → Wi-Fi</code>, nas
+propriedades da rede conectada.</td></tr>
+<tr><td><b>USB</b></td><td><code>http://127.0.0.1:10080</code>, com o
+aparelho ligado no cabo. <sup class="ref">[2]</sup></td></tr>
+</tbody>
+</table>
+
+<figure>
+<img src="figuras/fig-04-portal.png" alt="Esquema da página de aplicativos do Windows Device Portal">
+<figcaption>A página <code>Views → Apps</code>. Esquemático: o arranjo varia
+com a versão do sistema.</figcaption>
+</figure>
+
+<ol class="passos">
+<li><b>Abra o endereço</b> no navegador e faça login. O aviso de certificado
+não confiável é esperado: o certificado é do próprio aparelho.</li>
+<li><b>Vá em <code>Views → Apps</code></b>.</li>
+<li><b>Marque <code>Allow me to select optional packages</code></b> antes de
+escolher o arquivo. É essa caixa que habilita o campo de dependência.</li>
+<li><b>Em <code>App package</code>, escolha o <code>.appx</code></b> da
+pasta principal.</li>
+<li><b>No campo de dependência, escolha o arquivo dentro da subpasta</b>
+<code>Dependencies</code> correspondente à arquitetura do alvo.</li>
+<li><b>Clique em <code>Go</code></b> e acompanhe a barra de progresso.</li>
+<li><b>Ponha o aparelho</b> e procure o app na lista de aplicativos.</li>
+</ol>
+
+<div class="caixa perigo">
+<b class="rotulo">O erro mais comum desta seção</b>
+<p>Pular o passo 3. Sem a caixa marcada, o portal aceita o
+<code>.appx</code>, instala, e o app falha ao abrir ou nem aparece. A
+mensagem de erro não menciona dependências.</p>
+</div>
+
+<h2 id="usb"><span class="num">8.</span>Parear e implantar por USB</h2>
+
+<p>A segunda rota dispensa gerar pacote: o Visual Studio compila, instala e
+já abre o app no aparelho. É o caminho de quem está iterando.</p>
+
+<figure>
+<img src="figuras/fig-05-pareamento.png" alt="Sequência de cinco passos para parear o HoloLens com o Visual Studio">
+<figcaption>O pareamento acontece uma vez por PC. Depois disso o aparelho
+aparece direto na lista de alvos.</figcaption>
+</figure>
+
+<ol class="passos">
+<li><b>No HoloLens</b>, vá em
+<code>Settings → Update &amp; Security → For developers</code> e confirme
+que as opções de desenvolvedor estão ativas.</li>
+<li><b>Toque em <code>Pair</code></b>. O aparelho mostra um <b>PIN</b>.</li>
+<li><b>No Visual Studio</b>, com o projeto aberto, escolha
+<code>Device</code> como alvo de implantação.</li>
+<li><b>Execute.</b> O Visual Studio pede o PIN na primeira vez.</li>
+<li><b>Digite o PIN</b> e aguarde. Ele compila, transfere, instala e abre o
+app no aparelho.</li>
+</ol>
+
+<div class="caixa atencao">
+<b class="rotulo">O PIN expira</b>
+<p>Se a caixa do Visual Studio recusar o código, volte ao aparelho, toque em
+<code>Pair</code> de novo e use o PIN novo. Não é erro de digitação na maior
+parte das vezes.</p>
+</div>
+
+<p class="nota">O aparelho pode identificar a plataforma como ARM mesmo
+tendo sido compilado como ARM64. Isso é nomenclatura da ferramenta e não
+indica problema, desde que o build e o alvo estejam coerentes.</p>
+
+<h2 id="usar"><span class="num">9.</span>Gravar vídeo e extrair arquivos</h2>
+
+<p>A gravação sai com os hologramas compostos sobre a imagem da câmera, que
+é exatamente o que se quer para demonstrar o trabalho.</p>
+
+<table>
+<thead><tr><th style="width:12rem">Para</th><th>Faça</th></tr></thead>
+<tbody>
+<tr><td><b>Tirar uma foto</b></td><td>aperte <code>volume +</code> e
+<code>volume −</code> ao mesmo tempo</td></tr>
+<tr><td><b>Começar um vídeo</b></td><td>segure os dois por cerca de três
+segundos</td></tr>
+<tr><td><b>Parar o vídeo</b></td><td>toque nos dois de novo, ao mesmo
+tempo</td></tr>
+</tbody>
+</table>
+
+<p>Com o HoloLens ligado no PC pelo cabo USB-C, ele aparece no Explorador de
+Arquivos como um dispositivo portátil. Vídeos e fotos ficam em:</p>
+
+<pre><code>Este Computador\&lt;nome do aparelho&gt;\Internal Storage\Pictures\Camera Roll</code></pre>
+
+<p>O nome do aparelho é o que está em
+<code>Settings → System → About</code>, algo como
+<code>HOLOLENS-XXXXXX</code>. Pelo Device Portal, o mesmo conteúdo está em
+<code>File explorer</code> e em <code>Mixed Reality Capture</code>.</p>
+
+<h3>Notas do emulador</h3>
+
+<ul>
+<li>Para <b>selecionar</b> no emulador, a tecla de espaço.</li>
+<li><code>F2</code> abre o painel de controle da simulação.</li>
+</ul>
+
+<p class="nota">Estas duas são anotações do próprio projeto, e não a lista
+oficial. Se o comportamento do seu emulador for outro, a ajuda dele é a
+referência.</p>
+
+<div class="caixa atencao">
+<b class="rotulo">Planeje o teste final no espaço real</b>
+<p>Espere que o modelo apareça em posição diferente no aparelho em relação
+ao emulador. O posicionamento depende do mapeamento da sala. Faça o teste
+final no espaço onde a demonstração vai acontecer, e com tempo para
+ajustar.</p>
+</div>
+
+<h2 id="problemas"><span class="num">10.</span>Quando dá errado</h2>
+
+<table>
+<thead><tr><th>Sintoma</th><th>Causa provável</th><th>O que fazer</th></tr></thead>
+<tbody>
+<tr><td>UWP não pode ser selecionada no Unity</td><td>falta o módulo de
+build UWP no editor</td><td>instalar pelo Unity Hub, em
+<code>Add modules</code></td></tr>
+<tr><td>A janela do MRTK aparece cortada</td><td>ela nasce pequena</td>
+<td>esticar a janela antes de decidir</td></tr>
+<tr><td>Não acho a opção de publicar no Visual Studio</td><td>abriu o
+<code>.sln</code> errado</td><td>abrir o que está dentro da pasta do
+build</td></tr>
+<tr><td>Instala e o app não abre</td><td>faltou a dependência, ou a
+arquitetura não bate</td><td>reinstalar marcando
+<code>optional packages</code></td></tr>
+<tr><td>O portal não abre no navegador</td><td>Device Portal desligado, IP
+errado, ou outra rede</td><td>conferir no aparelho e repetir o IP</td></tr>
+<tr><td>O portal pede senha que ninguém sabe</td><td>a senha foi criada na
+habilitação e não anotada</td><td>redefinir o portal no próprio
+aparelho</td></tr>
+<tr><td>O PC não vê o aparelho por USB</td><td>cabo só de carga</td>
+<td>trocar por um cabo de dados</td></tr>
+<tr><td>O app roda travando</td><td>compilado em <code>Debug</code></td>
+<td>recompilar em <code>Release</code></td></tr>
+<tr><td>O holograma aparece em outro lugar</td><td>o mapeamento da sala é
+diferente do simulado</td><td>esperado. Ajustar no espaço real.</td></tr>
+</tbody>
+</table>
+
+<h3>Glossário</h3>
+
+<table>
+<tbody>
+<tr><td style="width:9rem"><b>UWP</b></td><td>o formato de aplicativo do
+Windows que o HoloLens 2 executa.</td></tr>
+<tr><td><b>MRTK</b></td><td><i>Mixed Reality Toolkit</i>, o conjunto que
+traz mãos, olhar e menus para o projeto do Unity.</td></tr>
+<tr><td><b>OpenXR</b></td><td>o padrão pelo qual o aplicativo conversa com o
+aparelho.</td></tr>
+<tr><td><b>Solution</b> (<code>.sln</code>)</td><td>o arquivo de projeto do
+Visual Studio gerado pelo build.</td></tr>
+<tr><td><b>Sideloading</b></td><td>instalar fora da loja, com certificado
+próprio.</td></tr>
+<tr><td><b>Dependências</b></td><td>as bibliotecas de runtime que acompanham
+o pacote, numa subpasta por arquitetura.</td></tr>
+<tr><td><b>Device Portal</b></td><td>o site que o aparelho serve para
+administração.</td></tr>
+<tr><td><b>ARM64 e x64</b></td><td>as arquiteturas. ARM64 é o aparelho, x64
+é o emulador.</td></tr>
+</tbody>
+</table>
+
+<h2 id="referencias"><span class="num">11.</span>Referências</h2>
+
+<ol class="refs">
+<li>MICROSOFT. <i>Install the tools.</i>
+<a class="url" href="https://learn.microsoft.com/en-us/windows/mixed-reality/develop/install-the-tools">learn.microsoft.com/windows/mixed-reality/develop/install-the-tools</a>
+<span class="o-que">Lista viva de versões compatíveis. É a fonte a
+consultar antes de instalar qualquer coisa da seção 3.</span></li>
+
+<li>MICROSOFT. <i>Using the Windows Device Portal.</i>
+<a class="url" href="https://learn.microsoft.com/en-us/windows/mixed-reality/develop/advanced-concepts/using-the-windows-device-portal">learn.microsoft.com/windows/mixed-reality/develop/advanced-concepts/using-the-windows-device-portal</a>
+<span class="o-que">Origem do endereço por USB,
+<code>127.0.0.1:10080</code>, e do procedimento de instalação da seção
+7.</span></li>
+
+<li>MICROSOFT. <i>Capture, record, and share mixed reality photos and
+videos.</i>
+<a class="url" href="https://learn.microsoft.com/en-us/hololens/holographic-photos-and-videos">learn.microsoft.com/hololens/holographic-photos-and-videos</a>
+<span class="o-que">Origem das combinações de botão de volume para foto e
+vídeo, na seção 9.</span></li>
+
+<li>MICROSOFT. <i>HoloLens 2 hardware.</i>
+<a class="url" href="https://learn.microsoft.com/en-us/hololens/hololens2-hardware">learn.microsoft.com/hololens/hololens2-hardware</a>
+<span class="o-que">Origem da posição dos botões na figura da seção
+2.</span></li>
+
+<li>MICROSOFT. <i>Learn more about Mixed Reality support options.</i>
+<a class="url" href="https://learn.microsoft.com/en-us/hololens/hololens2-support">learn.microsoft.com/hololens/hololens2-support</a>
+<span class="o-que">Origem da nota de ciclo de vida do equipamento, na
+seção 1.</span></li>
+
+<li>BERTOLIN, R. <i>hololens tutorial.txt</i>, em <i>TCC_LASVII_1.</i>
+<a class="url" href="https://github.com/ricardobertolin/TCC_LASVII_1">github.com/ricardobertolin/TCC_LASVII_1</a>
+<span class="o-que">As anotações de quem executou o fluxo no laboratório, e
+a base deste manual. Origem das notas do emulador da seção 9.</span></li>
+</ol>
+
+<div class="caixa atencao">
+<b class="rotulo">Sobre o alcance destas referências</b>
+<p>Os nomes de menu e de campo das seções 4 a 6, no Unity e no Visual
+Studio, mudam entre versões. Eles vêm de [6] e da execução no laboratório, e
+não de uma referência publicada. Se o que estiver na sua tela não bater, o
+nome mudou de lugar: a etapa continua a mesma.</p>
+</div>
+
+<footer>
+<p><b>Para imprimir:</b> o
+<a href="manual-impresso.pdf">guia em PDF</a>, 13 páginas em tamanho Carta.
+Também dá para <a href="manual-impresso.html">ler na tela</a>.</p>
+
+
+<p><b>Marcas e direitos.</b> Microsoft, HoloLens, Windows, Visual Studio e
+Mixed Reality Toolkit são marcas da Microsoft Corporation. Unity é marca da
+Unity Technologies. As marcas são citadas apenas para identificar as
+ferramentas descritas. Este é um documento <b>independente</b>, não
+produzido, revisado nem endossado por nenhuma delas, e não é documentação
+oficial. Havendo divergência, vale a documentação do fabricante.</p>
+
+<p>Texto e figuras © 2026 Ricardo Bertolin, sob a licença do repositório.</p>
+</footer>
+
+</main>
+</body>
+</html>

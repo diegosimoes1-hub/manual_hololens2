@@ -1,0 +1,56 @@
+*instalar as ferramentas necessárias para o hololens:
+https://learn.microsoft.com/en-us/windows/mixed-reality/develop/install-the-tools
+(ativar modo desenvolvedor do windows)
+
+*baixar emulador para testar antes de transferir para o equipamento físico
+
+*instalar unity e configurar com Mhttps://www.youtube.com/watch?v=OW5fMyeDBY
+ > instalar editor com UWP
+ > criar projeto 3D
+ > baixar MRTK foundations e tools
+ > adicionar foundation baixado no projeto do unity aberto
+ > ao aparecer a janela, esticar e selecionar 1a opçao
+ > habilitar OpenXR
+ > adicionar tools baixado no projeto do unity aberto
+ > em cima, mixed reality > toolkit > add to scene and configure...
+ > na direita, em inspector, mudar para defaulthololens2
+ > executar (botao de play)
+ > (ver outras definiçoes, como clone comfig, mover objetos e mostrar gestures)
+
+*criar projeto e testar, garantindo que funciona no unity
+
+*gerar build e abrir a solution no visual studio, gerando o .app
+(INTEL64 para emulador, ARM64 para Hololens2 real)
+ > a solution .sln deve ser a dentro da pasta onde foi gerada a build
+ > no visual studio, VERIFICAR SE ESTA EM RELEASE, clicar com o botão direito no projeto em gerenciador de soluções a direita,
+então publicar, então criar pacote app
+ > selecionar sideloaded, usar certificado, selecionar o tipo que usou para build no unity
+ > aguardar o pop-up informando que gerou o .app e sua dependencia
+
+*abrir browser, inserir IP DO EMULADOR OU HOLOLENS
+> abrir a sessão de app do emulador e instalar o .app e dependencia, garantindo funcionamento
+> na aba de apps, selecionar 'allow to select optional packages'
+> selecionar primeiro o arquivo na pasta principal
+> em seguida, na proxima aba, selecionar aquele dentro da pasta de dependencia correspondente
+(se for no emulador, x64)
+(http://172.21.28.78/#Apps)
+
+*seguir método por USB para transferir arquivo .app para dentro do HoloLens2.
+> para parear o Hololens2 com o desktop, no Hololens,
+ > settings
+ > windows update
+ > for developers
+ > ative developer features
+ > pair
+ > pegue o codigo
+no visual studio, dentro do projeto, selecione device
+ > coloque o codigo e aguarde o projeto do unity rodar (no hololens talvez rode como ARMS)
+
+para capturar video do hololens:
+ > no hololens2 pressione + e - ao mesmo tempo e segure(do lado direito do equipamento)
+ > pressione novamente para parar gravação, ela irá salvar na galeria
+com o hololens2 conectado no desktop, você pode extrair no path:
+Este Computador\HOLOLENS-I4G1J5\Internal Storage\Pictures\Camera Roll
+
+> dica: para selecionar no emulador usar espaço e f2 para abrir o menu.
+> provavelmente o modelo no hololens terá posicionamento espacial diferente do esperado.

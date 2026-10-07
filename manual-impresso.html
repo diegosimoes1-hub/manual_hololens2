@@ -1,0 +1,1201 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HoloLens 2 — Conectar e instalar (edição impressa)</title>
+<!--
+  Edicao impressa. Carta (8,5 x 11 pol), preto e branco, uma pagina por
+  <section class="pagina">. Mesma casa dos manuais dos robos do mestrado.
+
+  Base: o `hololens tutorial.txt` deste repositorio, escrito durante o TCC.
+  O que este manual acrescenta e a ordem, o porque de cada passo e os
+  lugares onde a coisa falha em silencio, que e o que um arquivo de notas
+  nao carrega.
+
+  Para gerar o PDF: `python preparar_pdf.py`.
+-->
+<style>
+@page { size: letter; margin: 0; }
+
+html, body { margin: 0; padding: 0; background: #fff; }
+body {
+  font: 9.2pt/1.31 Arial, Helvetica, "Liberation Sans", sans-serif;
+  color: #000;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- a folha ---------- */
+.pagina {
+  position: relative;
+  width: 8.5in;
+  height: 11in;
+  padding: 0.62in 0.85in 0.52in;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  overflow: hidden;
+  break-after: page;
+  page-break-after: always;
+}
+.pagina:last-child { break-after: auto; page-break-after: auto; }
+
+.corpo { flex: 1 1 auto; min-height: 0; }
+
+/* ---------- cabeçalho ---------- */
+.marca {
+  text-align: right;
+  font-weight: bold;
+  font-size: 16pt;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-bottom: 5pt;
+}
+.marca span { font-weight: normal; font-size: 9pt; letter-spacing: .12em;
+              vertical-align: 3pt; margin-left: 2pt; }
+.regua { border: 0; border-top: 2.2pt solid #000; margin: 0; }
+.regua-fina { border: 0; border-top: 0.6pt solid #000; margin: 0; }
+.titulo-doc { padding: 5pt 0 6pt; }
+.titulo-doc .acima { font-size: 12pt; font-weight: bold; line-height: 1.1; }
+.titulo-doc .grande { font-size: 19pt; font-weight: bold; line-height: 1.05;
+                      letter-spacing: -0.015em; }
+.titulo-doc .caps { font-size: 13pt; font-weight: bold; line-height: 1.15;
+                    text-transform: uppercase; }
+
+/* ---------- rodapé ---------- */
+.pe { margin-top: auto; padding-top: 7pt; }
+.pe .linha { display: flex; justify-content: space-between;
+             font-size: 8.5pt; font-style: italic; padding-top: 4pt; }
+
+/* ---------- texto ---------- */
+h2 {
+  font-size: 11.5pt;
+  margin: 10pt 0 3pt;
+  line-height: 1.2;
+}
+h2::before {
+  content: "";
+  display: inline-block;
+  width: 8pt; height: 8pt;
+  background: #000;
+  margin-right: 5pt;
+  vertical-align: 0;
+}
+h3 { font-size: 9.8pt; margin: 7pt 0 2pt; }
+p { margin: 0 0 4pt; text-align: justify; text-indent: 16pt; }
+p.reto, li p { text-indent: 0; }
+h2 + p, h3 + p, .barra + p, figure + p, table + p, .caixa p { text-indent: 0; }
+
+ul, ol { margin: 0 0 6pt; padding-left: 20pt; }
+li { margin-bottom: 2pt; text-align: justify; }
+ul.limpa { list-style: none; padding-left: 8pt; }
+ul.limpa li::before { content: "• "; }
+
+ol.passos { padding-left: 17pt; }
+ol.passos li { margin-bottom: 3pt; }
+
+code, .mono { font-family: "Courier New", Courier, monospace; font-size: 9pt; }
+pre { font-family: "Courier New", Courier, monospace; font-size: 8.4pt;
+      margin: 3pt 0 5pt 16pt; line-height: 1.3; }
+
+.nota { font-style: italic; margin: 5pt 0; text-indent: 0; text-align: justify; }
+.nota b { font-style: normal; }
+
+/* ---------- barra preta de seção, como folha de fabricante ---------- */
+.barra {
+  background: #000; color: #fff;
+  text-align: center; font-weight: bold;
+  font-size: 8.9pt; letter-spacing: .05em;
+  padding: 2.1pt 0 1.9pt;
+  margin: 8pt 0 5pt;
+  text-transform: uppercase;
+}
+.barra.meia { margin-top: 0; }
+
+.duas { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20pt; }
+.duas .barra { margin-top: 0; }
+.duas > div > *:first-child { margin-top: 0; }
+
+/* ---------- caixa de advertência ---------- */
+.caixa {
+  border: 1.3pt solid #000;
+  padding: 5pt 7pt 3.5pt;
+  margin: 6pt 0;
+}
+.caixa .rotulo {
+  font-weight: bold; font-size: 8.6pt; letter-spacing: .06em;
+  text-transform: uppercase; display: block; margin-bottom: 3pt;
+}
+.caixa p { margin-bottom: 3pt; text-indent: 0; }
+.caixa p:last-child { margin-bottom: 0; }
+.caixa.leve { border-width: 0.7pt; }
+
+/* ---------- tabelas ---------- */
+table { width: 100%; border-collapse: collapse; margin: 4pt 0 6pt;
+        font-size: 8.4pt; }
+table th, table td {
+  border: 0.6pt solid #000;
+  padding: 2pt 3.5pt;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.28;
+}
+table th { background: #dcdcdc; font-weight: bold; }
+table.limpa th, table.limpa td { border-left: 0; border-right: 0; }
+table td.num, table th.num { text-align: right; }
+table td.centro { text-align: center; }
+table.compacta { font-size: 8pt; }
+table.compacta th, table.compacta td { padding: 1.5pt 3pt; }
+
+/* ---------- figuras ---------- */
+figure { margin: 6pt 0 7pt; text-align: center; }
+figure img { max-width: 100%; height: auto; }
+figcaption { font-size: 7.6pt; font-style: italic; margin-top: 2.5pt;
+             text-align: center; }
+figcaption b { font-style: normal; }
+figure.direita { float: right; width: 2.5in; margin: 0 0 6pt 12pt; }
+
+/* Duas vistas da mesma coisa ficam lado a lado: empilhadas, a foto e o
+   esquematico comem 3 polegadas de altura da folha e empurram a tabela
+   dos controles para a pagina seguinte. */
+figure.lado-a-lado > div { display: flex; align-items: flex-end;
+                           justify-content: center; gap: 14pt; }
+figure.lado-a-lado img:first-child { width: 2.45in; }
+figure.lado-a-lado img:last-child  { width: 3.35in; }
+
+.capa-fig { text-align: center; margin: 14pt 0 0; }
+.capa-fig img { width: 5.0in; }
+
+/* ---------- índice ---------- */
+.indice { width: 100%; border-collapse: collapse; font-size: 9pt; }
+.indice td { border: 0; padding: 2.3pt 0; vertical-align: baseline; }
+.indice td.cod { font-family: "Courier New", monospace; font-size: 8.6pt;
+                 width: 1.5in; }
+.indice td.pg { text-align: right; width: 0.5in; }
+.indice tr.grupo td { font-weight: bold; padding-top: 9pt; }
+
+/* ---------- referências ---------- */
+ol.refs { list-style: none; padding-left: 0; margin: 4pt 0 6pt;
+          counter-reset: ref; }
+ol.refs li { counter-increment: ref; position: relative;
+             padding-left: 20pt; margin-bottom: 4pt; text-align: left; }
+ol.refs li::before { content: "[" counter(ref) "]"; position: absolute;
+                     left: 0; font-weight: bold; }
+ol.refs .url { font-family: "Courier New", monospace; font-size: 7.6pt;
+               color: #333; word-break: break-all; }
+sup.ref { font-size: 7pt; font-weight: bold; vertical-align: 2pt; }
+
+/* ---------- tela ---------- */
+@media screen {
+  body { background: #d8d8d8; padding: 18px 0; }
+  .pagina { margin: 0 auto 18px; box-shadow: 0 1px 8px rgba(0,0,0,.35); }
+  .aviso-tela {
+    max-width: 8.5in; margin: 0 auto 18px; padding: 10px 14px;
+    background: #fff; border-left: 4px solid #000; font-size: 10pt;
+  }
+  .aviso-tela a { color: #000; }
+}
+@media print { .aviso-tela { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="aviso-tela">
+<b>Edição impressa.</b> Treze páginas em tamanho Carta. Imprima com as margens
+em <b>nenhuma</b> e com <b>gráficos de fundo</b> ligados, ou baixe o
+<a href="manual-impresso.pdf">PDF pronto</a>. A versão para ler na tela é o
+<a href="manual.html">manual em página única</a>.
+</div>
+
+
+<!-- ============================ CAPA ============================ -->
+<section class="pagina">
+  <div class="marca">HoloLens 2<span>TCC</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Do projeto do Unity até o aparelho</div>
+    <div class="grande">Conectar e instalar</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <div class="capa-fig">
+      <img src="figuras/fig-01-fluxo.png" alt="Diagrama do fluxo do projeto ao aparelho" style="width:6.2in">
+    </div>
+
+    <table class="limpa" style="font-size:9.4pt;border-top:0.6pt solid #000;border-bottom:0.6pt solid #000;margin-top:12pt">
+      <tr><td style="width:1.9in"><b>Equipamento</b></td>
+          <td>Microsoft HoloLens 2</td></tr>
+      <tr><td><b>Cadeia de ferramentas</b></td>
+          <td>Unity com suporte UWP, MRTK, Visual Studio</td></tr>
+      <tr><td><b>Instalação no aparelho</b></td>
+          <td>Windows Device Portal, ou implantação por USB</td></tr>
+      <tr><td><b>Perfil do leitor</b></td>
+          <td>quem nunca publicou um aplicativo para HoloLens</td></tr>
+      <tr><td><b>Base</b></td>
+          <td><span class="mono">hololens tutorial.txt</span>, deste repositório</td></tr>
+      <tr><td><b>Documento</b></td>
+          <td>edição 1, revisão A</td></tr>
+    </table>
+
+    <p class="reto" style="margin-top:12pt">Este manual descreve o caminho
+    inteiro, do projeto aberto no Unity até o aplicativo rodando no
+    aparelho. São seis etapas em sequência, e a maior parte da dor de
+    cabeça vem de duas coisas: escolher a arquitetura errada na hora do
+    build, e esquecer de mandar a dependência junto com o pacote.</p>
+
+    <p class="reto">O que está aqui foi executado no laboratório e anotado
+    no <span class="mono">hololens tutorial.txt</span>. Este documento
+    reorganiza aquelas anotações em ordem de execução, explica o porquê de
+    cada passo e marca onde cada etapa falha em silêncio.</p>
+
+    <p class="nota" style="margin-top:auto"><b>Microsoft</b>,
+    <b>HoloLens</b>, <b>Windows</b>, <b>Visual Studio</b> e <b>Mixed
+    Reality Toolkit</b> são marcas da Microsoft Corporation. <b>Unity</b> é
+    marca da Unity Technologies. Documento independente, não produzido nem
+    endossado por nenhuma delas. Detalhe na página 13.</p>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>HL2_MAN_0000</span><span>1 of 1</span></div>
+  </div>
+</section>
+
+
+<!-- ============================ ÍNDICE ============================ -->
+<section class="pagina">
+  <div class="marca">HoloLens 2<span>TCC</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Conectar e instalar</div>
+    <div class="grande">Índice e convenções</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <h2>Como este manual está organizado</h2>
+    <p>Cinco documentos curtos, cada um com o próprio código no rodapé e a
+    própria numeração. Quem já tem as ferramentas instaladas começa no
+    0300.</p>
+
+    <table class="indice">
+      <tr class="grupo"><td class="cod">HL2_FE_0100</td>
+        <td>O aparelho e o caminho</td><td class="pg">3</td></tr>
+      <tr><td></td><td style="padding-left:12pt">O que é, o que tem e os botões</td><td class="pg">3</td></tr>
+      <tr><td></td><td style="padding-left:12pt">O fluxo inteiro e as versões</td><td class="pg">4</td></tr>
+
+      <tr class="grupo"><td class="cod">HL2_SW_0200</td>
+        <td>Preparar o ambiente</td><td class="pg">5</td></tr>
+      <tr><td></td><td style="padding-left:12pt">As ferramentas e o modo desenvolvedor</td><td class="pg">5</td></tr>
+      <tr><td></td><td style="padding-left:12pt">Unity e MRTK, passo a passo</td><td class="pg">6</td></tr>
+      <tr><td></td><td style="padding-left:12pt">Build Settings e gerar a solution</td><td class="pg">7</td></tr>
+
+      <tr class="grupo"><td class="cod">HL2_IN_0300</td>
+        <td>Gerar o pacote e instalar</td><td class="pg">8</td></tr>
+      <tr><td></td><td style="padding-left:12pt">Visual Studio: da solution ao pacote</td><td class="pg">8</td></tr>
+      <tr><td></td><td style="padding-left:12pt">Instalar pelo Device Portal</td><td class="pg">9</td></tr>
+      <tr><td></td><td style="padding-left:12pt">Parear e implantar por USB</td><td class="pg">10</td></tr>
+
+      <tr class="grupo"><td class="cod">HL2_OP_0400</td>
+        <td>Usar, gravar e extrair</td><td class="pg">11</td></tr>
+
+      <tr class="grupo"><td class="cod">HL2_RR_0500</td>
+        <td>Diagnóstico e glossário</td><td class="pg">12</td></tr>
+      <tr class="grupo"><td class="cod"></td><td>Referências e créditos</td><td class="pg">13</td></tr>
+    </table>
+
+    <h2>Convenções</h2>
+
+    <div class="caixa">
+      <span class="rotulo">Atenção</span>
+      <p>Moldura grossa. Marca o passo que, esquecido, faz a etapa seguinte
+      falhar sem mensagem de erro clara. São exatamente os pontos em que se
+      perde uma tarde.</p>
+    </div>
+
+    <div class="caixa leve">
+      <span class="rotulo">Observação</span>
+      <p>Moldura fina. Contexto que economiza tempo, ou diferença entre
+      versões das ferramentas.</p>
+    </div>
+
+    <p class="reto"><code>Texto em monoespaçado</code> é literal: nome de
+    menu, de campo, de arquivo ou endereço. Caminho de menu vem com setas:
+    <code>Settings &rarr; Update &amp; Security</code>. Os nomes de menu
+    ficam no inglês original, porque é assim que aparecem nas ferramentas
+    quando instaladas em inglês, que é o caso comum.</p>
+
+    <div class="caixa leve">
+      <span class="rotulo">Observação</span>
+      <p>As versões mudam rápido nesta cadeia de ferramentas. O que está
+      descrito aqui é o caminho do <b>MRTK 2</b> com build UWP, que foi o
+      usado no projeto e continua funcionando. Existe um <b>MRTK 3</b>, com
+      outra estrutura de pacotes, que não é o descrito neste manual. Os
+      passos de <b>empacotar e instalar</b>, das páginas 8 a 10, valem para
+      os dois, porque não dependem do toolkit.</p>
+    </div>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>HL2_MAN_0001</span><span>1 of 1</span></div>
+  </div>
+</section>
+
+
+<!-- ========================= O APARELHO 1/2 ========================= -->
+<section class="pagina">
+  <div class="marca">HoloLens 2<span>TCC</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="grande">HoloLens 2</div>
+    <div class="caps">O aparelho, os botões e o que dá para fazer</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <p>O HoloLens 2 é um computador vestível com visor transparente. Ele
+    desenha objetos que parecem estar no ambiente e os mantém parados em
+    relação à sala, não em relação à cabeça. É isso que separa realidade
+    mista de um vídeo colado na frente dos olhos.</p>
+
+    <p class="reto">Para o que interessa aqui, ele é um computador com
+    Windows: recebe aplicativos empacotados, tem um portal de administração
+    acessível pelo navegador e aceita implantação direta pelo Visual
+    Studio.</p>
+
+    <div class="barra">Controles físicos</div>
+
+    <figure class="lado-a-lado" style="margin-top:2pt">
+      <div>
+        <img src="figuras/foto-aparelho.png" alt="Fotografia do HoloLens 2 de três quartos">
+        <img src="figuras/fig-02-dispositivo.png" alt="Desenho esquemático do HoloLens 2 visto do lado direito">
+      </div>
+      <figcaption><b>Figura 1.</b> À esquerda, o aparelho inteiro. À direita,
+      a vista do lado direito, onde ficam os controles: esquemática, fora de
+      escala.</figcaption>
+    </figure>
+
+    <table class="compacta">
+      <tr><th style="width:0.35in"></th><th style="width:1.35in">Controle</th>
+          <th>Função</th></tr>
+      <tr><td class="centro">1</td><td><b>Volume + e &minus;</b></td>
+          <td>volume no uso normal <sup class="ref">[4]</sup>. Os dois
+          juntos tiram uma <b>foto</b>; segurando os dois por três segundos começa um
+          <b>vídeo</b>, e um toque nos dois para a gravação.</td></tr>
+      <tr><td class="centro">2</td><td><b>Energia</b></td>
+          <td>liga e desliga. Os LEDs ao lado mostram carga e estado.</td></tr>
+      <tr><td class="centro">3</td><td><b>USB-C</b></td>
+          <td>carga e cabo de dados. É por aqui que passa o pareamento com
+          o Visual Studio e a cópia de arquivos pelo Explorador.</td></tr>
+    </table>
+
+    <p class="nota"><b>NOTA:</b> os botões de brilho ficam do lado
+    esquerdo, e não aparecem na figura. Eles não têm papel no fluxo de
+    instalação.</p>
+
+    <div class="barra">O que é preciso antes de começar</div>
+
+    <table class="compacta">
+      <tr><th style="width:1.8in">Item</th><th>Por quê</th></tr>
+      <tr><td>Aparelho carregado</td>
+          <td>a instalação e o primeiro teste levam tempo, e um aparelho
+          desligando no meio da implantação deixa o pacote pela metade</td></tr>
+      <tr><td>Conta de usuário no aparelho</td>
+          <td>o Device Portal pede usuário e senha, criados na primeira
+          vez que ele é habilitado</td></tr>
+      <tr><td>Mesma rede que o PC</td>
+          <td>a rota do Device Portal é pela rede. Sem ela, sobra o
+          cabo.</td></tr>
+      <tr><td>Cabo USB-C de dados</td>
+          <td>cabo só de carga não serve, e é a causa silenciosa mais comum
+          de "o PC não vê o aparelho"</td></tr>
+      <tr><td>Espaço físico livre</td>
+          <td>o aparelho mapeia a sala. Testar encostado numa parede branca
+          e vazia dá um mapeamento ruim.</td></tr>
+    </table>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>HL2_FE_0100</span><span>1 of 2</span></div>
+  </div>
+</section>
+
+
+<!-- ========================= O APARELHO 2/2 ========================= -->
+<section class="pagina">
+  <div class="marca">HoloLens 2<span>TCC</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Ficha 0100</div>
+    <div class="grande">O fluxo inteiro</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <p>São quatro etapas até ter um pacote na mão, e duas rotas
+    alternativas para pôr esse pacote dentro do aparelho.</p>
+
+    <figure>
+      <img src="figuras/fig-01-fluxo.png" alt="Diagrama do fluxo do projeto ao aparelho" style="width:5.5in">
+      <figcaption><b>Figura 2.</b> As quatro etapas de geração e as duas
+      rotas de instalação.</figcaption>
+    </figure>
+
+    <table class="compacta">
+      <tr><th style="width:1.2in">Etapa</th><th style="width:1.9in">Produz</th>
+          <th>Onde costuma falhar</th></tr>
+      <tr><td><b>1. Unity</b></td><td>a cena com o MRTK configurado</td>
+          <td>plataforma ainda em Windows, e não em UWP</td></tr>
+      <tr><td><b>2. Build</b></td><td>uma <b>pasta</b> com um
+          <code>.sln</code> dentro</td>
+          <td>abrir o <code>.sln</code> errado, fora da pasta gerada</td></tr>
+      <tr><td><b>3. Visual Studio</b></td><td>o projeto compilado</td>
+          <td>ficar em <code>Debug</code> em vez de
+          <code>Release</code></td></tr>
+      <tr><td><b>4. Pacote</b></td><td>o <code>.appx</code> e a pasta de
+          <b>dependências</b></td>
+          <td>escolher arquitetura diferente da do build</td></tr>
+      <tr><td><b>5a. Portal</b></td><td>o app instalado</td>
+          <td>não marcar a caixa das dependências</td></tr>
+      <tr><td><b>5b. USB</b></td><td>o app instalado e rodando</td>
+          <td>PIN de pareamento expirado</td></tr>
+    </table>
+
+    <div class="caixa">
+      <span class="rotulo">Atenção</span>
+      <p>A <b>arquitetura</b> atravessa o fluxo inteiro e precisa ser a
+      mesma em todas as etapas. <b>ARM64</b> para o aparelho de verdade,
+      <b>x64</b> para o emulador. Compilar em ARM64 e tentar instalar no
+      emulador, ou o contrário, produz uma falha genérica de instalação que
+      não diz qual é o problema.</p>
+    </div>
+
+    <h2>Testar no emulador antes</h2>
+
+    <p>O emulador do HoloLens 2 roda no PC e aceita o mesmo pacote,
+    compilado em x64. Vale usar enquanto o projeto ainda muda muito: o
+    ciclo de recompilar e reinstalar é mais rápido, e não ocupa o aparelho,
+    que costuma ser um só no laboratório.</p>
+
+    <p class="reto">O que o emulador não reproduz é o que mais importa no
+    fim: o posicionamento espacial real. <b>Espere que o modelo apareça em
+    outro lugar no aparelho</b>, diferente do que parecia no emulador. Não
+    é defeito do projeto, é o mapeamento da sala.</p>
+
+    <div class="caixa leve">
+      <span class="rotulo">Observação</span>
+      <p>Sobre a vida útil do equipamento: a produção do HoloLens 2 foi
+      encerrada, e a Microsoft anunciou atualizações de segurança até o fim
+      de 2027 <sup class="ref">[5]</sup>. Isso não muda nenhum passo deste manual, mas muda a decisão
+      de apostar nesta plataforma para um trabalho novo e longo. Vale
+      registrar aqui para quem reabrir este repositório daqui a alguns
+      anos.</p>
+    </div>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>HL2_FE_0100</span><span>2 of 2</span></div>
+  </div>
+</section>
+
+
+<!-- ========================= AMBIENTE 1/3 ========================= -->
+<section class="pagina">
+  <div class="marca">HoloLens 2<span>TCC</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Preparar o ambiente 0200</div>
+    <div class="grande">As ferramentas</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <p>A ordem importa: o Unity precisa encontrar o Visual Studio já
+    instalado para oferecer o suporte a UWP, então instale o Visual Studio
+    primeiro.</p>
+
+    <div class="barra meia">O que instalar, na ordem</div>
+
+    <ol class="passos">
+      <li><b>Visual Studio</b>, com as cargas de trabalho
+      <code>Desktop development with C++</code>,
+      <code>Universal Windows Platform development</code> e
+      <code>Game development with Unity</code>. Nos componentes
+      individuais, confirme o <b>Windows 10/11 SDK</b> e o suporte a
+      <code>USB Device Connectivity</code>.</li>
+
+      <li><b>Unity Hub e o editor</b>, marcando o módulo
+      <code>Universal Windows Platform Build Support</code>. Sem esse
+      módulo a plataforma UWP aparece na lista mas não pode ser
+      selecionada, e a mensagem não explica por quê.</li>
+
+      <li><b>Emulador do HoloLens 2</b>, se você vai testar sem o
+      aparelho. Ele exige virtualização habilitada na BIOS e o Hyper-V
+      ligado no Windows.</li>
+
+      <li><b>Modo de desenvolvedor no Windows</b> do PC:
+      <code>Configurações &rarr; Privacidade e segurança &rarr; Para
+      desenvolvedores</code>. Sem isso não dá para instalar um pacote
+      assinado por certificado próprio.</li>
+
+      <li><b>Modo de desenvolvedor no HoloLens</b>:
+      <code>Settings &rarr; Update &amp; Security &rarr; For
+      developers</code>. Ative as opções de desenvolvedor e, na mesma tela,
+      o <b>Device Portal</b>.</li>
+    </ol>
+
+    <div class="caixa">
+      <span class="rotulo">Atenção</span>
+      <p>Ao habilitar o Device Portal pela primeira vez, o aparelho pede
+      para criar um <b>usuário e uma senha</b>. Eles não são a conta da
+      Microsoft e não são recuperáveis depois: anote. Sem eles o navegador
+      não passa da tela de login, e o único caminho é redefinir o portal no
+      próprio aparelho.</p>
+    </div>
+
+    <div class="barra">A documentação oficial</div>
+
+    <p>A lista de versões compatíveis muda com o tempo, e a página que a
+    mantém atualizada é a da Microsoft:</p>
+
+    <pre>learn.microsoft.com/windows/mixed-reality/develop/install-the-tools</pre>
+
+    <p class="nota" style="margin-top:-2pt">Referência [1].</p>
+
+    <p class="reto">Consulte essa página antes de instalar. Ela é a única
+    fonte que diz qual versão do Unity casa com qual versão do toolkit no
+    momento em que você estiver lendo. Este manual descreve o
+    procedimento, não a tabela de versões.</p>
+
+    <div class="caixa leve">
+      <span class="rotulo">Observação</span>
+      <p>Instalar tudo isso leva bem mais tempo e espaço em disco do que
+      parece. Reserve uma tarde e alguns gigabytes. Fazer isso na véspera
+      de uma apresentação é um erro clássico.</p>
+    </div>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>HL2_SW_0200</span><span>1 of 3</span></div>
+  </div>
+</section>
+
+
+<!-- ========================= AMBIENTE 2/3 ========================= -->
+<section class="pagina">
+  <div class="marca">HoloLens 2<span>TCC</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Preparar o ambiente 0200</div>
+    <div class="grande">Unity e MRTK</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <p>O MRTK é o que transforma um projeto 3D comum em um projeto de
+    realidade mista: ele traz as mãos, o olhar, os menus flutuantes e o
+    perfil de configuração do aparelho. Sem ele, a cena compila e roda, mas
+    não responde a gesto nenhum.</p>
+
+    <div class="barra meia">Passo a passo</div>
+
+    <ol class="passos">
+      <li><b>Crie um projeto 3D</b> no Unity Hub, com o editor que tem o
+      módulo UWP instalado.</li>
+
+      <li><b>Troque a plataforma para UWP.</b>
+      <code>File &rarr; Build Settings</code>, selecione
+      <code>Universal Windows Platform</code> e clique em
+      <code>Switch Platform</code>. Isso reimporta os assets e demora.</li>
+
+      <li><b>Baixe os pacotes do MRTK</b>, o <i>Foundation</i> e o
+      <i>Tools</i>. São arquivos <code>.unitypackage</code>.</li>
+
+      <li><b>Importe o Foundation</b> arrastando para o projeto aberto.
+      Ao terminar, aparece a janela de configuração do MRTK. Ela nasce
+      pequena: <b>estique a janela</b> antes de decidir qualquer coisa, ou
+      os botões ficam fora da área visível.</li>
+
+      <li><b>Aceite a primeira opção</b> na janela de configuração, que
+      aplica as definições recomendadas ao projeto.</li>
+
+      <li><b>Habilite o OpenXR</b> em
+      <code>Edit &rarr; Project Settings &rarr; XR Plug-in
+      Management</code>, na aba da plataforma UWP.</li>
+
+      <li><b>Importe o Tools</b>, do mesmo jeito.</li>
+
+      <li><b>Ponha o MRTK na cena</b>:
+      <code>Mixed Reality &rarr; Toolkit &rarr; Add to Scene and
+      Configure</code>.</li>
+
+      <li><b>Troque o perfil</b> no <code>Inspector</code>, à direita, para
+      <code>DefaultHoloLens2ConfigurationProfile</code>. Sem isso a cena
+      fica com o perfil genérico, que não assume mãos nem o formato do
+      visor.</li>
+
+      <li><b>Aperte Play</b> e confirme que a cena roda no editor antes de
+      tentar qualquer build. Um projeto que não roda no editor não vai
+      rodar no aparelho, e descobrir isso depois de meia hora de
+      compilação é desperdício.</li>
+    </ol>
+
+    <div class="caixa">
+      <span class="rotulo">Atenção</span>
+      <p>Só passe para a etapa de build depois de o projeto funcionar no
+      editor. Cada volta do ciclo build, empacotar e instalar custa
+      dezenas de minutos, e depurar no aparelho é muito mais difícil do que
+      depurar no editor.</p>
+    </div>
+
+    <p class="nota"><b>NOTA:</b> para clonar o perfil e editar as
+    definições do MRTK, mover objetos na cena ou visualizar os gestos, vale
+    seguir a documentação do próprio toolkit. Este manual para no ponto em
+    que a cena roda: daqui para a frente o assunto é publicar, não
+    programar.</p>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>HL2_SW_0200</span><span>2 of 3</span></div>
+  </div>
+</section>
+
+
+<!-- ========================= AMBIENTE 3/3 ========================= -->
+<section class="pagina">
+  <div class="marca">HoloLens 2<span>TCC</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Preparar o ambiente 0200</div>
+    <div class="grande">Build Settings e a solution</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <figure style="margin-top:0">
+      <img src="figuras/fig-03-build.png" alt="Esquema da janela Build Settings do Unity com os valores recomendados" style="width:5.4in">
+      <figcaption><b>Figura 3.</b> Os campos que importam em
+      <code>File &rarr; Build Settings</code>. Esquemático: a lista varia
+      com a versão do Unity.</figcaption>
+    </figure>
+
+    <table class="compacta">
+      <tr><th style="width:1.9in">Campo</th><th style="width:1.5in">Valor</th>
+          <th>Por quê</th></tr>
+      <tr><td><code>Target Device</code></td><td><code>HoloLens</code></td>
+          <td>define o perfil de dispositivo do pacote</td></tr>
+      <tr><td><code>Architecture</code></td>
+          <td><code>ARM 64-bit</code></td>
+          <td><b>x64</b> se o alvo for o emulador. É o campo que mais
+          causa erro.</td></tr>
+      <tr><td><code>Build Type</code></td><td><code>D3D Project</code></td>
+          <td>gera um projeto de aplicativo, e não uma biblioteca</td></tr>
+      <tr><td><code>Target SDK Version</code></td>
+          <td><code>Latest installed</code></td><td>usa o SDK que você
+          realmente instalou</td></tr>
+      <tr><td><code>Build configuration</code></td>
+          <td><code>Release</code></td>
+          <td>em <code>Debug</code> o app roda devagar no aparelho e às
+          vezes nem empacota</td></tr>
+    </table>
+
+    <div class="barra">Gerar</div>
+
+    <ol class="passos">
+      <li><b>Clique em <code>Build</code></b> e escolha uma pasta vazia,
+      por exemplo <code>Build/</code> dentro do projeto.</li>
+      <li><b>Espere.</b> A primeira compilação é longa.</li>
+      <li><b>Abra a pasta gerada</b> e localize o arquivo
+      <code>.sln</code> <b>dentro dela</b>.</li>
+    </ol>
+
+    <div class="caixa">
+      <span class="rotulo">Atenção</span>
+      <p>O <code>.sln</code> que interessa é o que está <b>dentro da pasta
+      que o build acabou de criar</b>, e não o <code>.sln</code> que o
+      Unity possa ter deixado na raiz do projeto para editar scripts. São
+      arquivos diferentes: o da raiz não empacota nada, e quem abre o
+      errado fica procurando a opção de publicar num menu onde ela não
+      existe.</p>
+    </div>
+
+    <p class="nota"><b>NOTA:</b> o Unity oferece <code>Build And Run</code>,
+    que compila e já tenta implantar. Enquanto você está aprendendo o
+    fluxo, prefira só <code>Build</code>: com as etapas separadas dá para
+    ver em qual delas a coisa parou.</p>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>HL2_SW_0200</span><span>3 of 3</span></div>
+  </div>
+</section>
+
+
+<!-- ========================= INSTALAR 1/3 ========================= -->
+<section class="pagina">
+  <div class="marca">HoloLens 2<span>TCC</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Gerar e instalar 0300</div>
+    <div class="grande">Da solution ao pacote</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <p>Aqui o Visual Studio transforma o projeto compilado em um pacote
+    instalável, assinado por um certificado que você mesmo gera. É esse
+    pacote que vai para o aparelho.</p>
+
+    <div class="barra meia">Procedimento</div>
+
+    <ol class="passos">
+      <li><b>Abra o <code>.sln</code></b> que está dentro da pasta do
+      build.</li>
+
+      <li><b>Confirme a configuração na barra de cima:
+      <code>Release</code></b>, e a plataforma igual à do build
+      (<code>ARM64</code> para o aparelho, <code>x64</code> para o
+      emulador).</li>
+
+      <li><b>No Gerenciador de Soluções</b>, à direita, clique com o botão
+      direito no projeto e escolha
+      <code>Publicar &rarr; Criar Pacotes de Aplicativo</code>.</li>
+
+      <li><b>Escolha <code>Sideloading</code></b>, que é distribuição fora
+      da loja.</li>
+
+      <li><b>Selecione ou crie o certificado.</b> Um certificado de teste
+      gerado na hora serve.</li>
+
+      <li><b>Marque a arquitetura</b> correspondente, a mesma de novo.</li>
+
+      <li><b>Aguarde o aviso</b> de que o pacote foi gerado. Ele diz onde
+      os arquivos ficaram.</li>
+    </ol>
+
+    <div class="barra">O que o Visual Studio produziu</div>
+
+    <table class="compacta">
+      <tr><th style="width:2.2in">Arquivo ou pasta</th><th>Para que serve</th></tr>
+      <tr><td><code>NomeDoApp_versão_ARM64.appx</code><br>(ou
+          <code>.msix</code>)</td>
+          <td>o aplicativo. É o arquivo principal.</td></tr>
+      <tr><td><code>Dependencies/</code></td>
+          <td>as bibliotecas de runtime, numa subpasta <b>por
+          arquitetura</b>. É o que quase todo mundo esquece.</td></tr>
+      <tr><td><code>.cer</code></td>
+          <td>o certificado que assinou o pacote.</td></tr>
+    </table>
+
+    <div class="caixa">
+      <span class="rotulo">Atenção</span>
+      <p>A pasta <code>Dependencies</code> tem uma subpasta por
+      arquitetura. Pegue a que <b>corresponde ao alvo</b>: a de
+      <code>ARM64</code> para o aparelho e a de <code>x64</code> para o
+      emulador. Mandar a dependência da arquitetura errada falha na
+      instalação com uma mensagem que fala de pacote inválido, sem dizer
+      que o problema é a arquitetura.</p>
+    </div>
+
+    <p class="nota"><b>NOTA:</b> com o pacote e as dependências em mãos, o
+    resto pode ser feito de qualquer PC na mesma rede do aparelho. Guarde a
+    pasta inteira: para reinstalar depois, não é preciso recompilar
+    nada.</p>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>HL2_IN_0300</span><span>1 of 3</span></div>
+  </div>
+</section>
+
+
+<!-- ========================= INSTALAR 2/3 ========================= -->
+<section class="pagina">
+  <div class="marca">HoloLens 2<span>TCC</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Gerar e instalar 0300</div>
+    <div class="grande">Instalar pelo Device Portal</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <p>O Device Portal é um site que o próprio aparelho serve. Do navegador
+    do PC dá para instalar aplicativos, ver o que está rodando, gravar a
+    tela e navegar nos arquivos. É a rota mais simples, e é a que não
+    precisa de cabo.</p>
+
+    <div class="barra meia">Achar o endereço</div>
+
+    <table class="compacta">
+      <tr><th style="width:1.5in">Ligação</th><th>Endereço</th></tr>
+      <tr><td><b>Wi-Fi</b></td>
+          <td><code>http://&lt;IP do aparelho&gt;</code>. O IP está em
+          <code>Settings &rarr; Network &amp; Internet &rarr; Wi-Fi</code>,
+          nas propriedades da rede conectada.</td></tr>
+      <tr><td><b>USB</b></td>
+          <td><code>http://127.0.0.1:10080</code>, com o aparelho ligado no
+          cabo. <sup class="ref">[2]</sup></td></tr>
+    </table>
+
+    <figure style="margin-top:4pt">
+      <img src="figuras/fig-04-portal.png" alt="Esquema da página de aplicativos do Windows Device Portal" style="width:5.5in">
+      <figcaption><b>Figura 4.</b> A página <code>Views &rarr; Apps</code>.
+      Esquemático: o arranjo varia com a versão do sistema.</figcaption>
+    </figure>
+
+    <ol class="passos">
+      <li><b>Abra o endereço</b> no navegador e faça login com o usuário e
+      a senha criados quando o portal foi habilitado. O aviso de
+      certificado não confiável é esperado: o certificado é do próprio
+      aparelho.</li>
+
+      <li><b>Vá em <code>Views &rarr; Apps</code></b>.</li>
+
+      <li><b>Marque <code>Allow me to select optional packages</code></b>
+      antes de escolher o arquivo. É essa caixa que habilita o campo de
+      dependência.</li>
+
+      <li><b>Em <code>App package</code>, escolha o
+      <code>.appx</code></b> da pasta principal.</li>
+
+      <li><b>No campo de dependência, escolha o arquivo dentro da
+      subpasta</b> <code>Dependencies</code> correspondente à arquitetura
+      do alvo.</li>
+
+      <li><b>Clique em <code>Go</code></b> e acompanhe a barra de
+      progresso.</li>
+
+      <li><b>Ponha o aparelho</b> e procure o app na lista de
+      aplicativos.</li>
+    </ol>
+
+    <div class="caixa">
+      <span class="rotulo">Atenção</span>
+      <p>Pular o passo 3 é o erro mais comum desta página. Sem a caixa
+      marcada, o portal aceita o <code>.appx</code>, instala, e o app falha
+      ao abrir ou nem aparece. A mensagem de erro não menciona
+      dependências.</p>
+    </div>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>HL2_IN_0300</span><span>2 of 3</span></div>
+  </div>
+</section>
+
+
+<!-- ========================= INSTALAR 3/3 ========================= -->
+<section class="pagina">
+  <div class="marca">HoloLens 2<span>TCC</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Gerar e instalar 0300</div>
+    <div class="grande">Parear e implantar por USB</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <p>A segunda rota dispensa gerar pacote: o Visual Studio compila,
+    instala e já abre o app no aparelho. É o caminho de quem está
+    iterando, porque encurta o ciclo.</p>
+
+    <figure style="margin-top:2pt">
+      <img src="figuras/fig-05-pareamento.png" alt="Sequência de cinco passos para parear o HoloLens com o Visual Studio" style="width:6.1in">
+      <figcaption><b>Figura 5.</b> O pareamento acontece uma vez por PC.
+      Depois disso o aparelho aparece direto na lista de alvos.</figcaption>
+    </figure>
+
+    <ol class="passos">
+      <li><b>No HoloLens</b>, vá em <code>Settings &rarr; Update &amp;
+      Security &rarr; For developers</code> e confirme que as opções de
+      desenvolvedor estão ativas.</li>
+
+      <li><b>Toque em <code>Pair</code></b>. O aparelho mostra um
+      <b>PIN</b>.</li>
+
+      <li><b>No Visual Studio</b>, com o projeto aberto, escolha
+      <code>Device</code> como alvo de implantação, na mesma barra onde
+      ficam <code>Release</code> e a arquitetura.</li>
+
+      <li><b>Execute</b>. O Visual Studio pede o PIN na primeira vez.</li>
+
+      <li><b>Digite o PIN</b> e aguarde. Ele compila, transfere, instala e
+      abre o app no aparelho.</li>
+    </ol>
+
+    <div class="caixa">
+      <span class="rotulo">Atenção</span>
+      <p>O PIN <b>expira</b>. Se a caixa do Visual Studio recusar o código,
+      volte ao aparelho, toque em <code>Pair</code> de novo e use o PIN
+      novo. Não é erro de digitação na maior parte das vezes.</p>
+    </div>
+
+    <table class="compacta">
+      <tr><th style="width:2.1in">Sintoma</th><th>Causa quase sempre</th></tr>
+      <tr><td>O aparelho não aparece na lista de alvos</td>
+          <td>cabo só de carga, modo de desenvolvedor desligado, ou o
+          componente de conectividade USB não instalado no Visual
+          Studio</td></tr>
+      <tr><td>Implanta e falha ao abrir</td>
+          <td>arquitetura diferente entre o build e o alvo</td></tr>
+      <tr><td>Fica lento e trava</td>
+          <td>está em <code>Debug</code>. Troque para
+          <code>Release</code>.</td></tr>
+      <tr><td>Pede PIN toda vez</td>
+          <td>o pareamento não está sendo guardado. Refaça com o aparelho
+          desbloqueado e ligado no mesmo porto USB.</td></tr>
+    </table>
+
+    <p class="nota"><b>NOTA:</b> o aparelho pode identificar a plataforma
+    como ARM mesmo tendo sido compilado como ARM64. Isso é nomenclatura da
+    ferramenta e não indica problema, desde que o build e o alvo estejam
+    coerentes.</p>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>HL2_IN_0300</span><span>3 of 3</span></div>
+  </div>
+</section>
+
+
+<!-- =========================== USAR =========================== -->
+<section class="pagina">
+  <div class="marca">HoloLens 2<span>TCC</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Operação 0400</div>
+    <div class="grande">Usar, gravar e extrair</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <div class="barra meia">Gravar o que você está vendo</div>
+
+    <p>A gravação sai com os hologramas compostos sobre a imagem da câmera,
+    que é exatamente o que se quer para demonstrar o trabalho.</p>
+
+    <table>
+      <tr><th style="width:2.1in">Para</th><th>Faça</th></tr>
+      <tr><td><b>Tirar uma foto</b></td>
+          <td>aperte <code>volume +</code> e <code>volume &minus;</code>
+          ao mesmo tempo</td></tr>
+      <tr><td><b>Começar um vídeo</b></td>
+          <td>segure os dois por cerca de três segundos</td></tr>
+      <tr><td><b>Parar o vídeo</b></td>
+          <td>toque nos dois de novo, ao mesmo tempo</td></tr>
+    </table>
+
+    <p class="reto">O arquivo vai para a galeria do aparelho. Dá para
+    conferir ali mesmo antes de transferir.</p>
+
+    <div class="barra">Tirar os arquivos do aparelho</div>
+
+    <p>Com o HoloLens ligado no PC pelo cabo USB-C, ele aparece no
+    Explorador de Arquivos como um dispositivo portátil. Os vídeos e as
+    fotos ficam em:</p>
+
+    <pre>Este Computador\&lt;nome do aparelho&gt;\Internal Storage\Pictures\Camera Roll</pre>
+
+    <p class="reto">O nome do aparelho é o que está em
+    <code>Settings &rarr; System &rarr; About</code>, algo como
+    <code>HOLOLENS-XXXXXX</code>. Pelo Device Portal, o mesmo conteúdo está
+    em <code>File explorer</code> e em
+    <code>Mixed Reality Capture</code>.</p>
+
+    <div class="barra">Notas do emulador</div>
+
+    <p>O emulador é controlado por teclado e mouse, e a lista completa de
+    atalhos está na ajuda dele. Das anotações do projeto, duas que
+    resolveram problemas concretos:</p>
+
+    <ul>
+      <li>Para <b>selecionar</b> no emulador, a tecla de espaço.</li>
+      <li><code>F2</code> abre o painel de controle da simulação.</li>
+    </ul>
+
+    <p class="nota"><b>NOTA:</b> estas duas são anotações do próprio
+    projeto, e não a lista oficial. Se o comportamento do seu emulador for
+    outro, a ajuda dele é a referência.</p>
+
+    <div class="caixa">
+      <span class="rotulo">Atenção</span>
+      <p><b>Espere que o modelo apareça em posição diferente no aparelho
+      real</b> em relação ao emulador. O posicionamento depende do
+      mapeamento da sala, que o emulador simula de forma aproximada.
+      Planeje o teste final no aparelho, no espaço real onde a demonstração
+      vai acontecer, e com tempo para ajustar.</p>
+    </div>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>HL2_OP_0400</span><span>1 of 1</span></div>
+  </div>
+</section>
+
+
+<!-- ====================== REFERÊNCIA RÁPIDA ====================== -->
+<section class="pagina">
+  <div class="marca">HoloLens 2<span>TCC</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Referência rápida 0500</div>
+    <div class="grande">Diagnóstico e glossário</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <div class="barra meia">Diagnóstico</div>
+
+    <table class="compacta">
+      <tr><th style="width:2.2in">Sintoma</th><th style="width:1.9in">Causa provável</th><th>O que fazer</th></tr>
+      <tr><td>UWP não pode ser selecionada no Unity</td>
+          <td>falta o módulo de build UWP no editor</td>
+          <td>instalar pelo Unity Hub, em <code>Add modules</code></td></tr>
+      <tr><td>A janela do MRTK aparece cortada</td>
+          <td>ela nasce pequena</td><td>esticar a janela antes de
+          decidir</td></tr>
+      <tr><td>Não acho a opção de publicar no Visual Studio</td>
+          <td>abriu o <code>.sln</code> errado</td>
+          <td>abrir o que está dentro da pasta do build</td></tr>
+      <tr><td>Instala e o app não abre</td>
+          <td>faltou a dependência, ou a arquitetura não bate</td>
+          <td>reinstalar marcando <code>optional packages</code></td></tr>
+      <tr><td>O portal não abre no navegador</td>
+          <td>Device Portal desligado, IP errado, ou outra rede</td>
+          <td>conferir no aparelho e repetir o IP</td></tr>
+      <tr><td>O portal pede senha que ninguém sabe</td>
+          <td>a senha foi criada na habilitação e não anotada</td>
+          <td>redefinir o portal no próprio aparelho</td></tr>
+      <tr><td>O PC não vê o aparelho por USB</td>
+          <td>cabo só de carga</td><td>trocar por um cabo de dados</td></tr>
+      <tr><td>O app roda travando</td>
+          <td>compilado em <code>Debug</code></td>
+          <td>recompilar em <code>Release</code></td></tr>
+      <tr><td>O holograma aparece em outro lugar</td>
+          <td>o mapeamento da sala é diferente do simulado</td>
+          <td>esperado. Ajustar no espaço real.</td></tr>
+    </table>
+
+    <div class="barra">Glossário</div>
+
+    <table class="compacta">
+      <tr><td style="width:1.35in"><b>UWP</b></td>
+          <td>o formato de aplicativo do Windows que o HoloLens 2 executa.</td></tr>
+      <tr><td><b>MRTK</b></td>
+          <td><i>Mixed Reality Toolkit</i>, o conjunto que traz mãos,
+          olhar e menus para o projeto do Unity.</td></tr>
+      <tr><td><b>OpenXR</b></td>
+          <td>o padrão pelo qual o aplicativo conversa com o aparelho.</td></tr>
+      <tr><td><b>Solution</b> (<code>.sln</code>)</td>
+          <td>o arquivo de projeto do Visual Studio gerado pelo
+          build.</td></tr>
+      <tr><td><b>Sideloading</b></td>
+          <td>instalar fora da loja, com certificado próprio.</td></tr>
+      <tr><td><b>Dependências</b></td>
+          <td>as bibliotecas de runtime que acompanham o pacote, numa
+          subpasta por arquitetura.</td></tr>
+      <tr><td><b>Device Portal</b></td>
+          <td>o site que o aparelho serve para administração.</td></tr>
+      <tr><td><b>ARM64 e x64</b></td>
+          <td>as arquiteturas. ARM64 é o aparelho, x64 é o emulador.</td></tr>
+    </table>
+
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>HL2_RR_0500</span><span>1 of 2</span></div>
+  </div>
+</section>
+
+
+<!-- ================== REFERÊNCIAS E CRÉDITOS ================== -->
+<section class="pagina">
+  <div class="marca">HoloLens 2<span>TCC</span></div>
+  <hr class="regua">
+  <div class="titulo-doc">
+    <div class="acima">Referência rápida 0500</div>
+    <div class="grande">Referências e créditos</div>
+  </div>
+  <hr class="regua">
+
+  <div class="corpo">
+    <div class="barra meia">Referências</div>
+
+    <ol class="refs">
+      <li>MICROSOFT. <i>Install the tools.</i>
+      <span class="url">learn.microsoft.com/windows/mixed-reality/develop/install-the-tools</span><br>
+      Lista viva de versões compatíveis. É a fonte a consultar antes de
+      instalar qualquer coisa da página 5.</li>
+
+      <li>MICROSOFT. <i>Using the Windows Device Portal.</i>
+      <span class="url">learn.microsoft.com/windows/mixed-reality/develop/advanced-concepts/using-the-windows-device-portal</span><br>
+      Origem do endereço por USB, <code>127.0.0.1:10080</code>, e do
+      procedimento de instalação da página 9.</li>
+
+      <li>MICROSOFT. <i>Capture, record, and share mixed reality photos and
+      videos.</i>
+      <span class="url">learn.microsoft.com/hololens/holographic-photos-and-videos</span><br>
+      Origem das combinações de botão de volume para foto e vídeo, na
+      página 11.</li>
+
+      <li>MICROSOFT. <i>HoloLens 2 hardware.</i>
+      <span class="url">learn.microsoft.com/hololens/hololens2-hardware</span><br>
+      Origem da posição dos botões na Figura 1.</li>
+
+      <li>MICROSOFT. <i>Learn more about Mixed Reality support options.</i>
+      <span class="url">learn.microsoft.com/hololens/hololens2-support</span><br>
+      Origem da nota de ciclo de vida do equipamento, na página 4.</li>
+
+      <li>BERTOLIN, R. <i>hololens tutorial.txt</i>, em
+      <i>TCC_LASVII_1.</i>
+      <span class="url">github.com/ricardobertolin/TCC_LASVII_1</span><br>
+      As anotações de quem executou o fluxo no laboratório, e a base deste
+      manual. Origem das notas do emulador da página 11.</li>
+    </ol>
+
+    <div class="caixa leve">
+      <span class="rotulo">Sobre o alcance destas referências</span>
+      <p>Os nomes de menu e de campo das páginas 6 a 8, no Unity e no
+      Visual Studio, mudam entre versões. Eles vêm de [6] e da execução no
+      laboratório, e não de uma referência publicada. Se o que estiver na
+      sua tela não bater, o nome mudou de lugar: a etapa continua a
+      mesma.</p>
+    </div>
+
+    <div class="barra">Marcas e direitos</div>
+
+    <p class="reto"><b>Microsoft</b>, <b>HoloLens</b>, <b>Windows</b>,
+    <b>Visual Studio</b> e <b>Mixed Reality Toolkit</b> são marcas da
+    Microsoft Corporation. <b>Unity</b> é marca da Unity Technologies. As
+    marcas são citadas apenas para identificar as ferramentas descritas.
+    Este é um documento <b>independente</b>, não produzido, revisado nem
+    endossado por nenhuma delas, e não é documentação oficial. Havendo
+    divergência, vale a documentação do fabricante.</p>
+
+    <p class="reto">Texto e figuras: <b>Ricardo Bertolin</b>.
+    &copy; 2026, sob a licença do repositório.
+    <span class="mono">github.com/ricardobertolin/TCC_LASVII_1</span></p>
+  </div>
+
+  <div class="pe">
+    <hr class="regua-fina">
+    <div class="linha"><span>HL2_RR_0500</span><span>2 of 2</span></div>
+  </div>
+</section>
+
+</body>
+</html>
