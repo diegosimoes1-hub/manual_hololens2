@@ -10,14 +10,12 @@ que falta num tutorial escrito so em texto corrido.
 
 O desenho do aparelho e deliberadamente simplificado. Desenhar o HoloLens
 com fidelidade daria uma figura bonita e inutil: quem precisa da figura
-esta procurando o botao de volume, nao admirando o produto. Por isso a
-foto e o esquematico aparecem lado a lado no manual, e nao um no lugar do
-outro: a foto diz o que e o aparelho, o esquematico diz onde ficam os
-botoes.
+esta procurando o botao de volume, nao admirando o produto. Quem quer ver
+o aparelho tem a foto da capa, que e outra coisa e esta em outro lugar.
 
-ATENCAO: `figuras/foto-aparelho.png` e uma fotografia, nao sai daqui.
-Rodar este script nao a recria e tambem nao a apaga, mas apagar a pasta
-`figuras/` inteira perde o arquivo.
+ATENCAO: `figuras/foto-aparelho.png`, a da capa, e uma fotografia e nao
+sai daqui. Rodar este script nao a recria e tambem nao a apaga, mas
+apagar a pasta `figuras/` inteira perde o arquivo.
 
 Dependencias: matplotlib.
 """

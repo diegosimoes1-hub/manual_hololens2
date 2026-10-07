@@ -67,8 +67,8 @@ figure img{display:block;max-width:100%;height:auto;margin:0 auto;
            background:#fff;border-radius:4px}
 figcaption{color:var(--fraco);font-size:.88rem;text-align:center;
            margin-top:.6rem}
-.duas-figuras{display:flex;flex-wrap:wrap;gap:0 1.4rem;align-items:flex-start}
-.duas-figuras>figure{flex:1 1 17rem;min-width:0}
+figure.abertura{margin:1.8rem 0 0}
+figure.abertura img{max-width:28rem}
 .passos{counter-reset:passo;list-style:none;padding-left:0}
 .passos>li{counter-increment:passo;position:relative;padding-left:2.4rem;
        margin-bottom:1rem}
@@ -103,6 +103,10 @@ sup.ref{font-size:.7em;font-weight:700;color:var(--destaque)}
 <p class="sub">Do projeto aberto no Unity até o aplicativo rodando no
 aparelho. Baseado no <code>hololens tutorial.txt</code> deste repositório,
 reorganizado em ordem de execução.</p>
+
+<figure class="abertura">
+<img src="figuras/foto-aparelho.png" alt="HoloLens 2 visto de três quartos: visor, faixa de cabeça e conjunto traseiro">
+</figure>
 
 <p class="acoes">
 <a class="botao vazio" href="manual-impresso.pdf">Versão para imprimir (PDF, 13 páginas)</a>
@@ -189,18 +193,10 @@ novo e longo.</p>
 
 <h2 id="aparelho"><span class="num">2.</span>O aparelho e os botões</h2>
 
-<div class="duas-figuras">
-<figure>
-<img src="figuras/foto-aparelho.png" alt="Fotografia do HoloLens 2 de três quartos, mostrando o visor, a faixa de cabeça e o conjunto traseiro">
-<figcaption>O aparelho inteiro: visor, faixa de cabeça e o conjunto
-traseiro, que é onde ficam a bateria e o ajuste.</figcaption>
-</figure>
 <figure>
 <img src="figuras/fig-02-dispositivo.png" alt="Desenho esquemático do HoloLens 2 visto do lado direito">
-<figcaption>Vista do lado direito, onde ficam os controles.
-Esquemático, fora de escala.</figcaption>
+<figcaption>Vista do lado direito. Esquemático, fora de escala.</figcaption>
 </figure>
-</div>
 
 <table>
 <thead><tr><th style="width:2rem"></th><th style="width:9rem">Controle</th><th>Função</th></tr></thead>

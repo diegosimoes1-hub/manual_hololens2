@@ -32,10 +32,11 @@ do Device Portal e a sequência de pareamento. Ao contrário dos manuais dos
 robôs, aqui não há modelo de CAD por trás, e o `preparar_manual.py` roda
 sozinho.
 
-A exceção é `figuras/foto-aparelho.png`, que é uma fotografia e não é
-gerada por script nenhum. Ela fica ao lado do esquemático em vez de no
-lugar dele: a foto diz o que é o aparelho, o esquemático diz onde ficam os
-botões, e um não substitui o outro.
+A exceção é `figuras/foto-aparelho.png`, a imagem da capa: é uma
+fotografia e não é gerada por script nenhum. Ela não substitui o
+esquemático do aparelho na seção 2, que continua sendo um desenho porque
+quem abre aquela página está procurando o botão de volume, e não vendo o
+produto.
 
 ```
 pip install matplotlib playwright && python -m playwright install chromium

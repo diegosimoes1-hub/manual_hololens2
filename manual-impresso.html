@@ -156,14 +156,6 @@ figcaption { font-size: 7.6pt; font-style: italic; margin-top: 2.5pt;
 figcaption b { font-style: normal; }
 figure.direita { float: right; width: 2.5in; margin: 0 0 6pt 12pt; }
 
-/* Duas vistas da mesma coisa ficam lado a lado: empilhadas, a foto e o
-   esquematico comem 3 polegadas de altura da folha e empurram a tabela
-   dos controles para a pagina seguinte. */
-figure.lado-a-lado > div { display: flex; align-items: flex-end;
-                           justify-content: center; gap: 14pt; }
-figure.lado-a-lado img:first-child { width: 2.45in; }
-figure.lado-a-lado img:last-child  { width: 3.35in; }
-
 .capa-fig { text-align: center; margin: 14pt 0 0; }
 .capa-fig img { width: 5.0in; }
 
@@ -221,7 +213,7 @@ em <b>nenhuma</b> e com <b>gráficos de fundo</b> ligados, ou baixe o
 
   <div class="corpo">
     <div class="capa-fig">
-      <img src="figuras/fig-01-fluxo.png" alt="Diagrama do fluxo do projeto ao aparelho" style="width:6.2in">
+      <img src="figuras/foto-aparelho.png" alt="HoloLens 2 visto de três quartos: visor, faixa de cabeça e conjunto traseiro">
     </div>
 
     <table class="limpa" style="font-size:9.4pt;border-top:0.6pt solid #000;border-bottom:0.6pt solid #000;margin-top:12pt">
@@ -368,14 +360,10 @@ em <b>nenhuma</b> e com <b>gráficos de fundo</b> ligados, ou baixe o
 
     <div class="barra">Controles físicos</div>
 
-    <figure class="lado-a-lado" style="margin-top:2pt">
-      <div>
-        <img src="figuras/foto-aparelho.png" alt="Fotografia do HoloLens 2 de três quartos">
-        <img src="figuras/fig-02-dispositivo.png" alt="Desenho esquemático do HoloLens 2 visto do lado direito">
-      </div>
-      <figcaption><b>Figura 1.</b> À esquerda, o aparelho inteiro. À direita,
-      a vista do lado direito, onde ficam os controles: esquemática, fora de
-      escala.</figcaption>
+    <figure style="margin-top:2pt">
+      <img src="figuras/fig-02-dispositivo.png" alt="Desenho esquemático do HoloLens 2 visto do lado direito" style="width:5.3in">
+      <figcaption><b>Figura 1.</b> Vista do lado direito. Esquemático, fora
+      de escala.</figcaption>
     </figure>
 
     <table class="compacta">
